@@ -30,10 +30,16 @@ We can issue SQL queries, like so:
 
 ```python
 import anosql
+import psycopg2
+
 conn = psycopg2.connect('...')
 queries = anosql.load_queries('queries.sql')
+
 queries = queries.get_all_greetings(conn)
 # => [(1, 'Hi')]
+
+queries.get_all_greetings.__doc__
+# => Get all the greetings in the database
 ```
 
 Caveats
