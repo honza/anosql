@@ -36,6 +36,11 @@ queries = queries.get_all_greetings(conn)
 # => [(1, 'Hi')]
 ```
 
+Caveats
+-------
+
+Postgresql only at the moment
+
 License
 -------
 
