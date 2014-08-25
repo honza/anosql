@@ -4,7 +4,7 @@ long_desc = open('README.md').read()
 
 setup(
     name='anosql',
-    version='0.0.1',
+    version='0.0.2',
     url='https://github.com/honza/anosql',
     install_requires=[],
     description='Easy SQL in Python',

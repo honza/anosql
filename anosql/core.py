@@ -19,7 +19,15 @@ AUTO_GEN = 3
 
 
 class Queries(object):
-    pass
+
+    def __init__(self):
+        self.available_queries = []
+
+    def add_query(self, name, fn):
+        setattr(self, name, fn)
+
+        if name not in self.available_queries:
+            self.available_queries.append(name)
 
 
 def get_fn_name(line):
@@ -98,7 +106,7 @@ def build_queries_object(queries):
     q = Queries()
 
     for name, fn in queries:
-        setattr(q, name, fn)
+        q.add_query(name, fn)
 
     return q
 
