@@ -133,6 +133,7 @@ def load_queries(db_type, filename):
     if not os.path.exists(filename):
         raise SQLLoadException('Could not read file', filename)
 
-    f = open(filename).read()
+    with open(filename) as queries_file:
+        f = queries_file.read()
     queries = parse_queries_string(db_type, f)
     return build_queries_object(queries)
