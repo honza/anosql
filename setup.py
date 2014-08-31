@@ -1,6 +1,7 @@
 from setuptools import setup
 
-long_desc = open('README.md').read()
+with open('README.md') as readme_file:
+    long_desc = readme_file.read()
 
 setup(
     name='anosql',
