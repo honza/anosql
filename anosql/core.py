@@ -3,6 +3,7 @@ anosql main module
 """
 
 import os
+from functools import partial
 
 
 class SQLLoadException(Exception):
@@ -35,7 +36,16 @@ def get_fn_name(line):
     return line[9:]
 
 
-def parse_sql_entry(e):
+def parse_sql_entry(db_type, e):
+    is_sqlite = False
+    is_postgres = False
+
+    if db_type == 'sqlite':
+        is_sqlite = True
+
+    if db_type == 'postgres':
+        is_postgres = True
+
     lines = e.split('\n')
 
     if not lines[0].startswith('-- name:'):
@@ -63,8 +73,11 @@ def parse_sql_entry(e):
 
     query = ' '.join(query)
 
-    if sql_type == AUTO_GEN:
+    if is_postgres and sql_type == AUTO_GEN:
         query += ' RETURNING id'
+
+    if is_sqlite:
+        query = query.replace('%s', '?')
 
     def fn(conn, *args):
         results = None
@@ -74,9 +87,14 @@ def parse_sql_entry(e):
             cur.execute(query, args)
             conn.commit()
 
-        if sql_type == AUTO_GEN:
+        if is_postgres and sql_type == AUTO_GEN:
             cur.execute(query, args)
             results = cur.fetchone()[0]
+            conn.commit()
+
+        if is_sqlite and sql_type == AUTO_GEN:
+            cur.execute(query, args)
+            results = cur.lastrowid
             conn.commit()
 
         if sql_type == SELECT:
@@ -95,9 +113,9 @@ def parse_sql_entry(e):
     return name, fn
 
 
-def parse_queries_string(s):
+def parse_queries_string(db_type, s):
     result = s.split('\n\n')
-    result = map(parse_sql_entry, result)
+    result = map(partial(parse_sql_entry, db_type), result)
 
     return result
 
@@ -111,10 +129,10 @@ def build_queries_object(queries):
     return q
 
 
-def load_queries(filename):
+def load_queries(db_type, filename):
     if not os.path.exists(filename):
         raise SQLLoadException('Could not read file', filename)
 
     f = open(filename).read()
-    queries = parse_queries_string(f)
+    queries = parse_queries_string(db_type, f)
     return build_queries_object(queries)

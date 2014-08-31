@@ -31,9 +31,15 @@ We can issue SQL queries, like so:
 ```python
 import anosql
 import psycopg2
+import sqlite3
 
+# PostgreSQL
 conn = psycopg2.connect('...')
-queries = anosql.load_queries('queries.sql')
+queries = anosql.load_queries('postgres', 'queries.sql')
+
+# Or, Sqlite3...
+conn = sqlite3.connect('cool.db')
+queries = anosql.load_queries('sqlite', 'queries.sql')
 
 queries = queries.get_all_greetings(conn)
 # => [(1, 'Hi')]
@@ -48,7 +54,7 @@ queries.available_queries
 Caveats
 -------
 
-Postgresql only at the moment
+Postgresql and sqlite only at the moment
 
 License
 -------
