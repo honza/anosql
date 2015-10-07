@@ -98,7 +98,7 @@ def parse_sql_entry(db_type, e):
             conn.commit()
 
         if sql_type == SELECT:
-            if '%s' in query:
+            if '%s' in query or '?' in query:
                 cur.execute(query, args)
             else:
                 cur.execute(query)
