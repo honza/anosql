@@ -1,6 +1,8 @@
 anosql
 ======
 
+[![PyPI version](https://badge.fury.io/py/anosql.svg)](https://badge.fury.io/py/anosql)
+
 A Python library for using SQL
 
 *Warning: very alpha*
