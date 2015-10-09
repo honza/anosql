@@ -47,6 +47,9 @@ queries = queries.get_all_greetings(conn)
 queries.get_all_greetings.__doc__
 # => Get all the greetings in the database
 
+queries.get_all_greetings.__query__
+# => SELECT * FROM greetings;
+
 queries.available_queries
 # => ['get_all_greetings']
 ```

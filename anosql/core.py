@@ -108,6 +108,7 @@ def parse_sql_entry(db_type, e):
         return results
 
     fn.__doc__ = doc
+    fn.__query__ = query
     fn.func_name = name
 
     return name, fn
