@@ -87,22 +87,22 @@ def parse_sql_entry(db_type, e):
         cur = conn.cursor()
 
         if sql_type == INSERT_UPDATE_DELETE:
-            cur.execute(query, *args)
+            cur.execute(query, args)
             conn.commit()
 
         if is_postgres and sql_type == AUTO_GEN:
-            cur.execute(query, *args)
+            cur.execute(query, args)
             results = cur.fetchone()[0]
             conn.commit()
 
         if is_sqlite and sql_type == AUTO_GEN:
-            cur.execute(query, *args)
+            cur.execute(query, args)
             results = cur.lastrowid
             conn.commit()
 
         if sql_type == SELECT:
             if '%s' in query or '?' in query or '%(':
-                cur.execute(query, *args)
+                cur.execute(query, args)
             else:
                 cur.execute(query)
             results = cur.fetchall()
