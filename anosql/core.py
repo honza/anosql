@@ -4,6 +4,7 @@ anosql main module
 
 import os
 from functools import partial
+import re
 
 
 class SQLLoadException(Exception):
@@ -78,17 +79,19 @@ def parse_sql_entry(db_type, e):
 
     if is_sqlite:
         query = query.replace('%s', '?')
+    elif is_postgres:
+        query = re.sub(r':([a-zA-Z_-]+)', r'%(\1)s', query)
 
-    def fn(conn, *args):
+    def fn(conn, *args, **kwargs):
         results = None
         cur = conn.cursor()
 
         if sql_type == INSERT_UPDATE_DELETE:
-            cur.execute(query, args)
+            cur.execute(query, kwargs if len(kwargs) > 0 else args)
             conn.commit()
 
         if is_postgres and sql_type == AUTO_GEN:
-            cur.execute(query, args)
+            cur.execute(query, kwargs if len(kwargs) > 0 else args)
             results = cur.fetchone()[0]
             conn.commit()
 
@@ -98,8 +101,8 @@ def parse_sql_entry(db_type, e):
             conn.commit()
 
         if sql_type == SELECT:
-            if '%s' in query or '?' in query:
-                cur.execute(query, args)
+            if '%s' in query or '?' in query or '%(':
+                cur.execute(query, kwargs if len(kwargs) > 0 else args)
             else:
                 cur.execute(query)
             results = cur.fetchall()
