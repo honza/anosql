@@ -1,7 +1,7 @@
 anosql
 ======
 
-[![PyPI version](https://badge.fury.io/py/anosql.svg)](https://badge.fury.io/py/anosql)
+[![PyPI version](https://badge.fury.io/py/anosql.svg)](https://badge.fury.io/py/anosql) [![Documentation Status](http://readthedocs.org/projects/anosql/badge/?version=latest)](http://anosql.readthedocs.io/en/latest/?badge=latest)
 
 A Python library for using SQL
 
