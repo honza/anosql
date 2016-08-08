@@ -61,6 +61,14 @@ We can issue SQL queries, like so:
     queries.available_queries
     # => ['get_all_greetings']
 
+Tests
+-----
+
+::
+
+   $ pip install tox
+   $ tox
+
 Caveats
 -------
 
