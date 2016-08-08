@@ -22,8 +22,11 @@ AUTO_GEN = 3
 
 class Queries(object):
 
-    def __init__(self):
+    def __init__(self, queries=list()):
         self.available_queries = []
+
+        for name, fn in queries:
+            self.add_query(name, fn)
 
     def add_query(self, name, fn):
         setattr(self, name, fn)
@@ -118,19 +121,8 @@ def parse_sql_entry(db_type, e):
 
 
 def parse_queries_string(db_type, s):
-    result = s.split('\n\n')
-    result = map(partial(parse_sql_entry, db_type), result)
-
-    return result
-
-
-def build_queries_object(queries):
-    q = Queries()
-
-    for name, fn in queries:
-        q.add_query(name, fn)
-
-    return q
+    return [parse_sql_entry(db_type, expression)
+            for expression in s.split('\n\n')]
 
 
 def load_queries(db_type, filename):
@@ -139,5 +131,11 @@ def load_queries(db_type, filename):
 
     with open(filename) as queries_file:
         f = queries_file.read()
+
     queries = parse_queries_string(db_type, f)
-    return build_queries_object(queries)
+    return Queries(queries)
+
+
+def load_queries_from_string(db_type, string):
+    queries = parse_queries_string(db_type, string)
+    return Queries(queries)

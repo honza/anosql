@@ -1,2 +1,8 @@
 *.pyc
 docs/_build
+venv
+.eggs
+.cache
+.tox
+.python-version
+anosql.egg-info
