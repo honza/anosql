@@ -8,6 +8,9 @@ anosql
     :target: http://anosql.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
 
+.. image:: https://travis-ci.org/honza/anosql.svg?branch=master
+    :target: https://travis-ci.org/honza/anosql
+
 A Python library for using SQL
 
 *Warning: very alpha*

@@ -12,6 +12,9 @@ Welcome to anosql's documentation!
 .. image:: http://readthedocs.org/projects/anosql/badge/?version=latest
     :target: http://anosql.readthedocs.io/en/latest/?badge=latest
 
+.. image:: https://travis-ci.org/honza/anosql.svg?branch=master
+    :target: https://travis-ci.org/honza/anosql
+
 A Python library for using SQL
 
 .. warning:: *very alpha*
