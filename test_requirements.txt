@@ -1,2 +1,4 @@
 tox
 pytest
+testing.postgresql
+psycopg2
