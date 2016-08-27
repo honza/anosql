@@ -24,8 +24,7 @@ def postgres(request):
     import psycopg2
 
     postgresdb = testing.postgresql.Postgresql()
-    sqlconnection =  psycopg2.connect(**postgresdb.dsn())
-
+    sqlconnection = psycopg2.connect(**postgresdb.dsn())
 
     def fin():
         "teardown"
