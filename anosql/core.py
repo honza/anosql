@@ -28,6 +28,9 @@ class Queries(object):
         for name, fn in queries:
             self.add_query(name, fn)
 
+    def __repr__(self):
+        return "anosql.Queries(" + self.available_queries.__repr__() + ")"
+
     def add_query(self, name, fn):
         setattr(self, name, fn)
 
@@ -53,7 +56,7 @@ def parse_sql_entry(db_type, e):
     lines = e.split('\n')
 
     if not lines[0].startswith('-- name:'):
-        raise SQLParseException()
+        raise SQLParseException('Query does not start with "-- name:".')
 
     name = get_fn_name(lines[0])
     doc = None
@@ -104,10 +107,7 @@ def parse_sql_entry(db_type, e):
             conn.commit()
 
         if sql_type == SELECT:
-            if '%s' in query or '?' in query or '%(':
-                cur.execute(query, kwargs if len(kwargs) > 0 else args)
-            else:
-                cur.execute(query)
+            cur.execute(query, kwargs if len(kwargs) > 0 else args)
             results = cur.fetchall()
 
         cur.close()
