@@ -86,7 +86,7 @@ def parse_sql_entry(db_type, e):
     if is_sqlite:
         query = query.replace('%s', '?')
     elif is_postgres:
-        query = re.sub(r':([a-zA-Z_-]+)', r'%(\1)s', query)
+        query = re.sub(r'[^:]:([a-zA-Z_-]+)', r'%(\1)s', query)
 
     def fn(conn, *args, **kwargs):
         results = None
