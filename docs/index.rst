@@ -32,6 +32,9 @@ Installation
 Usage
 -----
 
+Basics
+******
+
 Given a ``queries.sql`` file:
 
 .. code-block:: sql
@@ -67,6 +70,54 @@ We can issue SQL queries, like so:
 
     queries.available_queries
     # => ['get_all_greetings']
+    
+  Parameters
+**********
+
+Often, you want to change parts of the query dynamically, particularly values in the WHERE clause.
+You can use parameters to do this:
+
+.. code-block:: sql
+
+  -- name: get-greetings-for-language-and-length
+  -- Get all the greetings in the database
+  SELECT * 
+  FROM greetings
+  WHERE lang = %s;
+
+And they become Python named parameters:
+
+.. code-block:: python
+  
+  visitor_language = "en"
+  queries.get_all_greetings(conn, visitor_language)
+
+
+
+Named Parameters
+****************
+
+To make queries with many parameters more understandable and maintainable, you can give the parameters names:
+
+.. code-block:: sql
+
+  -- name: get-greetings-for-language-and-length
+  -- Get all the greetings in the database
+  SELECT * 
+  FROM greetings
+  WHERE lang = :lang
+  AND len(greeting) <= :length_limit;
+  
+If you were writing a Postgres query, you could also format the parameters as ``%s(lang)`` and ``%s(length_limit)``.
+
+Then, call your queries like any Python function with named parameters:
+
+.. code-block:: python
+  
+  visitor_language = "en"
+
+  greetings_for_texting = queries.get_all_greetings(conn, lang=visitor_language, length_limit=140)
+  
 
 Caveats
 -------
