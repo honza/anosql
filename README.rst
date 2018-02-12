@@ -81,7 +81,7 @@ You can use parameters to do this:
   FROM greetings
   WHERE lang = %s;
 
-And they become Python named parameters:
+And they become positional parameters:
 
 .. code-block:: python
   
@@ -104,9 +104,9 @@ To make queries with many parameters more understandable and maintainable, you c
   WHERE lang = :lang
   AND len(greeting) <= :length_limit;
   
-If you were writing a Postgres query, you could also format the parameters as ``%s(lang)`` and ``%s(length_limit)``.
+If you were writing a Postgresql query, you could also format the parameters as ``%s(lang)`` and ``%s(length_limit)``.
 
-Then, call your queries like any Python function with named parameters:
+Then, call your queries like you would any Python function with named parameters:
 
 .. code-block:: python
   
