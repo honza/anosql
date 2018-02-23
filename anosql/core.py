@@ -38,29 +38,20 @@ class Queries(object):
             self.available_queries.append(name)
 
 
-def get_fn_name(line):
-    line = line.replace('-', '_')
-    return line[9:]
-
-
 def parse_sql_entry(db_type, e):
-    is_sqlite = False
-    is_postgres = False
+    assert db_type in [ 'sqlite', 'postgres' ]
 
-    if db_type == 'sqlite':
-        is_sqlite = True
+    lines = e.splitlines()
 
-    if db_type == 'postgres':
-        is_postgres = True
-
-    lines = e.split('\n')
-
-    if not lines[0].startswith('-- name:'):
+    # name of query
+    is_name = re.compile(r'\s*--\s+name\s*:\s*(\S+)').match
+    has_name = is_name(lines[0])
+    if not has_name:
         raise SQLParseException('Query does not start with "-- name:".')
 
-    name = get_fn_name(lines[0])
-    doc = None
+    name = has_name.group(1).replace('-', '_')
 
+    # type of query
     if '<!' in name:
         sql_type = AUTO_GEN
         name = name.replace('<!', '_auto')
@@ -70,45 +61,48 @@ def parse_sql_entry(db_type, e):
     else:
         sql_type = SELECT
 
-    if lines[1].startswith('-- '):
-        doc = lines[1][3:]
+    # documentation are comment lines after the initial name
+    is_doc = re.compile(r'\s*--\s(.*)').match
+    doc = ''
+    for i in range(1, len(lines)):
+        has_doc = is_doc(lines[i])
+        if has_doc:
+            doc += has_doc.group(1) + '\n'
+        else:
+            break
 
-    if doc:
-        query = lines[2:]
-    else:
-        query = lines[1:]
+    # what remains is the query
+    query = ' '.join(lines[i:])
 
-    query = ' '.join(query)
+    if query == '':
+        return None, None
 
-    if is_postgres and sql_type == AUTO_GEN:
+    # ??? this is rather ad-hoc:-(
+    if sql_type == AUTO_GEN and db_type == 'postgres':
         query += ' RETURNING id'
 
-    if is_sqlite:
+    # ??? postgres psycopg2 supports %s...
+    if db_type == 'sqlite':
         query = query.replace('%s', '?')
-    elif is_postgres:
+    elif db_type == 'postgres':
         query = re.sub(r'[^:]:([a-zA-Z_-]+)', r'%(\1)s', query)
 
+    # dynamically create the "name" function
     def fn(conn, *args, **kwargs):
+        # ???
+        #if db_type == 'sqlite':
+        #    assert len(kwargs) == 0
         results = None
         cur = conn.cursor()
-
-        if sql_type == INSERT_UPDATE_DELETE:
-            cur.execute(query, kwargs if len(kwargs) > 0 else args)
-            conn.commit()
-
-        if is_postgres and sql_type == AUTO_GEN:
-            cur.execute(query, kwargs if len(kwargs) > 0 else args)
-            results = cur.fetchone()[0]
-            conn.commit()
-
-        if is_sqlite and sql_type == AUTO_GEN:
-            cur.execute(query, args)
-            results = cur.lastrowid
-            conn.commit()
+        cur.execute(query, kwargs if len(kwargs) > 0 else args)
 
         if sql_type == SELECT:
-            cur.execute(query, kwargs if len(kwargs) > 0 else args)
             results = cur.fetchall()
+        elif sql_type == AUTO_GEN:
+            if db_type == 'postgres':
+                results = cur.fetchone()[0]
+            elif db_type == 'sqlite':
+                results = cur.lastrowid
 
         cur.close()
         return results
@@ -122,7 +116,7 @@ def parse_sql_entry(db_type, e):
 
 def parse_queries_string(db_type, s):
     return [parse_sql_entry(db_type, expression)
-            for expression in s.split('\n\n')]
+            for expression in re.split(r'([ \t]*\r|[ \t]*\n|[ \t]*\r\n){2,}', s)[::2]]
 
 
 def load_queries(db_type, filename):
