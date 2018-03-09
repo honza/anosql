@@ -13,8 +13,6 @@ anosql
 
 A Python library for using SQL
 
-*Warning: very alpha*
-
 Inspired by the excellent `Yesql`_ library by Kris Jenkins.  In my mother
 tongue, *ano* means *yes*.
 
@@ -70,8 +68,8 @@ We can issue SQL queries, like so:
 Parameters
 **********
 
-Often, you want to change parts of the query dynamically, particularly values in the WHERE clause.
-You can use parameters to do this:
+Often, you want to change parts of the query dynamically, particularly values in
+the ``WHERE`` clause.  You can use parameters to do this:
 
 .. code-block:: sql
 
@@ -93,7 +91,8 @@ And they become positional parameters:
 Named Parameters
 ****************
 
-To make queries with many parameters more understandable and maintainable, you can give the parameters names:
+To make queries with many parameters more understandable and maintainable, you
+can give the parameters names:
 
 .. code-block:: sql
 
@@ -104,15 +103,18 @@ To make queries with many parameters more understandable and maintainable, you c
   WHERE lang = :lang
   AND len(greeting) <= :length_limit;
   
-If you were writing a Postgresql query, you could also format the parameters as ``%s(lang)`` and ``%s(length_limit)``.
+If you were writing a Postgresql query, you could also format the parameters as
+``%s(lang)`` and ``%s(length_limit)``.
 
-Then, call your queries like you would any Python function with named parameters:
+Then, call your queries like you would any Python function with named
+parameters:
 
 .. code-block:: python
   
   visitor_language = "en"
 
-  greetings_for_texting = queries.get_all_greetings(conn, lang=visitor_language, length_limit=140)
+  greetings_for_texting = queries.get_all_greetings(
+                conn, lang=visitor_language, length_limit=140)
 
 
 Tests
