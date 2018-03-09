@@ -38,7 +38,7 @@ class Queries(object):
 
 
 def parse_sql_entry(db_type, e):
-    assert db_type in [ 'sqlite', 'postgres' ]
+    assert db_type in ['sqlite', 'postgres']
 
     lines = e.splitlines()
 
@@ -89,7 +89,7 @@ def parse_sql_entry(db_type, e):
     # dynamically create the "name" function
     def fn(conn, *args, **kwargs):
         # ???
-        #if db_type == 'sqlite':
+        # if db_type == 'sqlite':
         #    assert len(kwargs) == 0
         results = None
         cur = conn.cursor()
@@ -115,7 +115,8 @@ def parse_sql_entry(db_type, e):
 
 def parse_queries_string(db_type, s):
     return [parse_sql_entry(db_type, expression)
-            for expression in re.split(r'([ \t]*\r|[ \t]*\n|[ \t]*\r\n){2,}', s)[::2]]
+            for expression in
+            re.split(r'([ \t]*\r|[ \t]*\n|[ \t]*\r\n){2,}', s)[::2]]
 
 
 def load_queries(db_type, filename):
