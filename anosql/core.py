@@ -76,21 +76,14 @@ def parse_sql_entry(db_type, e):
     if query == '':
         return None, None
 
-    # ??? this is rather ad-hoc:-(
     if sql_type == AUTO_GEN and db_type == 'postgres':
         query += ' RETURNING id'
 
-    # ??? postgres psycopg2 supports %s...
-    if db_type == 'sqlite':
-        query = query.replace('%s', '?')
-    elif db_type == 'postgres':
+    if db_type == 'postgres':
         query = re.sub(r'[^:]:([a-zA-Z_-]+)', r'%(\1)s', query)
 
     # dynamically create the "name" function
     def fn(conn, *args, **kwargs):
-        # ???
-        # if db_type == 'sqlite':
-        #    assert len(kwargs) == 0
         results = None
         cur = conn.cursor()
         cur.execute(query, kwargs if len(kwargs) > 0 else args)
