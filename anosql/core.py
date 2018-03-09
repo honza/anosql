@@ -3,7 +3,6 @@ anosql main module
 """
 
 import os
-from functools import partial
 import re
 
 
