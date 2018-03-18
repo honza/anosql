@@ -1,0 +1,40 @@
+# Changelog anosql
+
+### Version dev
+
+* BugFix: PostgreSQL type casting conflict in the regex for name parameters
+
+### Version 0.2.0
+
+* Feature: Handle named argument in PostgreSQL queries
+* Tests: Include tests suite
+* Tests: Add CI with Travis
+* Documentation: Bootstrap of Sphinx documentation
+* Documentation: minor upgrades
+* Refacto/Clean: minor improvement for usability
+
+### Version 0.1.2
+
+* BugFix: SQLite special character '?' not taken into account
+* Feature: Add __query__ to query attribute
+* Import statement upgrade
+
+### Version 0.1.1
+
+* Minor fix on opening the queries file
+* Packaging: minor upgrades
+
+### Version 0.1.0
+
+* Feature: Support SQLite queries
+
+### Version 0.0.2
+
+* Feature: retrieve all stored queries from queries object
+* Documentation, and examples upgrade
+
+### Version 0.0.1
+
+* Feature: Queries callable from the queries object as attribute from the description name of the query
+* Feature: Parse entry file and store the queries into an objects
+* Bootstrap python library, BSD 2-clauses licence
