@@ -60,6 +60,9 @@ def parse_sql_entry(db_type, e):
     else:
         sql_type = SELECT
 
+    use_col_description = True if name.startswith('$') else False
+    name = name.replace('$', '')
+
     # documentation are comment lines after the initial name
     is_doc = re.compile(r'\s*--\s(.*)').match
     doc = ''
@@ -89,7 +92,12 @@ def parse_sql_entry(db_type, e):
         cur.execute(query, kwargs if len(kwargs) > 0 else args)
 
         if sql_type == SELECT:
-            results = cur.fetchall()
+            cols = [col[0] for col in cur.description]
+            if use_col_description:
+                results = [dict(zip(cols, row)) for row in cur.fetchall()]
+            else:
+                results = cur.fetchall()
+
         elif sql_type == AUTO_GEN:
             if db_type == 'postgres':
                 results = cur.fetchone()[0]
