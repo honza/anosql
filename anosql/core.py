@@ -92,8 +92,8 @@ def parse_sql_entry(db_type, e):
         cur.execute(query, kwargs if len(kwargs) > 0 else args)
 
         if sql_type == SELECT:
-            cols = [col[0] for col in cur.description]
             if use_col_description:
+                cols = [col[0] for col in cur.description]
                 results = [dict(zip(cols, row)) for row in cur.fetchall()]
             else:
                 results = cur.fetchall()
