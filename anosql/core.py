@@ -100,7 +100,8 @@ def parse_sql_entry(db_type, e):
 
         elif sql_type == AUTO_GEN:
             if db_type == 'postgres':
-                results = cur.fetchone()[0]
+                pool = cur.fetchone()
+                results = pool[0] if results else None
             elif db_type == 'sqlite':
                 results = cur.lastrowid
 
