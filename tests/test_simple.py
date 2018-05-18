@@ -68,7 +68,7 @@ def test_parametrized_insert(sqlite):
                            "-- testing insertion\n"
                            "CREATE TABLE foo (a, b, c);\n\n"
                            "-- name: insert-some-value\n"
-                           "INSERT INTO foo (a, b, c) VALUES (%s, %s, %s);\n\n"
+                           "INSERT INTO foo (a, b, c) VALUES (?, ?, ?);\n\n"
                            "-- name: get-all-values\n"
                            "SELECT * FROM foo;\n")
 
