@@ -2,6 +2,7 @@
 
 ### Version dev
 
+* Feature: Return dict if the name of the query is prepended with $
 * BugFix: PostgreSQL type casting conflict in the regex for name parameters
 
 ### Version 0.2.0
