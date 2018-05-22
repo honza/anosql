@@ -37,6 +37,11 @@ Given a ``queries.sql`` file:
   -- Get all the greetings in the database
   SELECT * FROM greetings;
 
+  -- name: $select-users
+  -- Get all the users from the database,
+  -- and return it as a dict
+  SELECT * FROM USERS;
+
 We can issue SQL queries, like so:
 
 .. code-block:: python
@@ -53,6 +58,9 @@ We can issue SQL queries, like so:
     conn = sqlite3.connect('cool.db')
     queries = anosql.load_queries('sqlite', 'queries.sql')
 
+    queries = queries.get_all_users(conn)
+    # [{"id": 1, "name": "Meghan"}, {"id": 2, "name": "Harry"}]
+
     queries = queries.get_all_greetings(conn)
     # => [(1, 'Hi')]
 
@@ -63,7 +71,7 @@ We can issue SQL queries, like so:
     # => SELECT * FROM greetings;
 
     queries.available_queries
-    # => ['get_all_greetings']
+    # => ['get_all_greetings', 'get_all_books']
 
 Parameters
 **********
