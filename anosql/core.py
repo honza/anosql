@@ -17,6 +17,19 @@ class SQLParseException(Exception):
 SELECT = 1
 INSERT_UPDATE_DELETE = 2
 AUTO_GEN = 3
+_RE_VARS = (r'(?P<dblquote>"[^"]+")|'
+            r'(?P<quote>\'[^\']+\')|'
+            r'(?P<lead>[^:]):(?P<var_name>[\w-]+)(?P<trail>[^:])')
+
+
+def var_replacer(m):
+    gd = m.groupdict()
+    if gd['dblquote'] is not None:
+        return gd['dblquote']
+    elif gd['quote'] is not None:
+        return gd['quote']
+    else:
+        return '{lead}%({var_name})s{trail}'.format(**gd)
 
 
 class Queries(object):
@@ -83,7 +96,7 @@ def parse_sql_entry(db_type, e):
         query += ' RETURNING id'
 
     if db_type == 'postgres':
-        query = re.sub(r'[^:]:([a-zA-Z_-]+)', r'%(\1)s', query)
+        query = re.sub(_RE_VARS, var_replacer, query)
 
     # dynamically create the "name" function
     def fn(conn, *args, **kwargs):
