@@ -88,14 +88,16 @@ def parse_sql_entry(db_type, e):
 
     # what remains is the query
     query = ' '.join(lines[i:])
+    query = query.strip()
 
     if query == '':
         return None, None
 
-    if sql_type == AUTO_GEN and db_type == 'postgres':
-        query += ' RETURNING id'
-
     if db_type == 'postgres':
+        if sql_type == AUTO_GEN:
+            query = query[:-1] if query[-1] == ';' else query
+            query += ' RETURNING id'
+
         query = re.sub(_RE_VARS, var_replacer, query)
 
     # dynamically create the "name" function

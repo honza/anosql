@@ -98,7 +98,7 @@ def test_simple_query_pg(postgres):
                 "-- testing insertion\n"
                 "CREATE TABLE foo (id serial primary key, a int, b int, c int);\n\n"
                 "-- name: insert-some-value<!\n"
-                "INSERT INTO foo (a, b, c) VALUES (1, 2, 3)\n\n"
+                "INSERT INTO foo (a, b, c) VALUES (1, 2, 3);\n\n"
                 "-- name: get-all-values\n"
                 "SELECT a, b, c FROM foo;\n")
 
@@ -115,7 +115,7 @@ def test_auto_insert_query_pg(postgres):
                 "-- testing insertion\n"
                 "CREATE TABLE foo (id serial primary key, a int, b int, c int);\n\n"
                 "-- name: insert-some-value<!\n"
-                "INSERT INTO foo (a, b, c) VALUES (1, 2, 3)\n\n"
+                "INSERT INTO foo (a, b, c) VALUES (1, 2, 3);\n\n"
                 "-- name: get-all-values\n"
                 "SELECT a, b, c FROM foo;\n")
 
@@ -149,7 +149,7 @@ def test_auto_parameterized_insert_query_pg(postgres):
                 "-- testing insertion\n"
                 "CREATE TABLE foo (id serial primary key, a int, b int, c int);\n\n"
                 "-- name: insert-some-value<!\n"
-                "INSERT INTO foo (a, b, c) VALUES (%s, %s, %s)\n\n"
+                "INSERT INTO foo (a, b, c) VALUES (%s, %s, %s);\n\n"
                 "-- name: get-all-values\n"
                 "SELECT a, b, c FROM foo;\n")
 
