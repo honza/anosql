@@ -18,25 +18,6 @@ def sqlite(request):
     return sqlconnection
 
 
-@pytest.fixture
-def postgres(request):
-    import testing.postgresql
-    import psycopg2
-
-    postgresdb = testing.postgresql.Postgresql()
-    sqlconnection = psycopg2.connect(**postgresdb.dsn())
-
-    def fin():
-        "teardown"
-        print("teardown")
-        sqlconnection.close()
-        postgresdb.stop()
-
-    request.addfinalizer(fin)
-
-    return sqlconnection
-
-
 def test_simple_query(sqlite):
     _test_create_insert = ("-- name: create-some-table\n"
                            "-- testing insertion\n"
@@ -93,7 +74,7 @@ def test_parametrized_insert_named(sqlite):
     assert q.get_all_values(sqlite) == [(10, 11, 12)]
 
 
-def test_simple_query_pg(postgres):
+def test_simple_query_pg(postgresql):
     _queries = ("-- name: create-some-table!\n"
                 "-- testing insertion\n"
                 "CREATE TABLE foo (id serial primary key, a int, b int, c int);\n\n"
@@ -104,13 +85,13 @@ def test_simple_query_pg(postgres):
 
     q = anosql.load_queries_from_string("postgres", _queries)
 
-    q.create_some_table(postgres)
-    q.insert_some_value_auto(postgres)
+    q.create_some_table(postgresql)
+    q.insert_some_value_auto(postgresql)
 
-    assert q.get_all_values(postgres) == [(1, 2, 3)]
+    assert q.get_all_values(postgresql) == [(1, 2, 3)]
 
 
-def test_auto_insert_query_pg(postgres):
+def test_auto_insert_query_pg(postgresql):
     _queries = ("-- name: create-some-table!\n"
                 "-- testing insertion\n"
                 "CREATE TABLE foo (id serial primary key, a int, b int, c int);\n\n"
@@ -120,14 +101,15 @@ def test_auto_insert_query_pg(postgres):
                 "SELECT a, b, c FROM foo;\n")
 
     q = anosql.load_queries_from_string("postgres", _queries)
+    print(q.available_queries)
 
-    q.create_some_table(postgres)
+    q.create_some_table(postgresql)
 
-    assert q.insert_some_value_auto(postgres) == 1
-    assert q.insert_some_value_auto(postgres) == 2
+    assert q.insert_some_value_auto(postgresql) == 1
+    assert q.insert_some_value_auto(postgresql) == 2
 
 
-def test_parameterized_insert_pg(postgres):
+def test_parameterized_insert_pg(postgresql):
     _queries = ("-- name: create-some-table!\n"
                 "-- testing insertion\n"
                 "CREATE TABLE foo (id serial primary key, a int, b int, c int);\n\n"
@@ -138,13 +120,13 @@ def test_parameterized_insert_pg(postgres):
 
     q = anosql.load_queries_from_string("postgres", _queries)
 
-    q.create_some_table(postgres)
-    q.insert_some_value(postgres, 1, 2, 3)
+    q.create_some_table(postgresql)
+    q.insert_some_value(postgresql, 1, 2, 3)
 
-    assert q.get_all_values(postgres) == [(1, 2, 3)]
+    assert q.get_all_values(postgresql) == [(1, 2, 3)]
 
 
-def test_auto_parameterized_insert_query_pg(postgres):
+def test_auto_parameterized_insert_query_pg(postgresql):
     _queries = ("-- name: create-some-table!\n"
                 "-- testing insertion\n"
                 "CREATE TABLE foo (id serial primary key, a int, b int, c int);\n\n"
@@ -155,15 +137,15 @@ def test_auto_parameterized_insert_query_pg(postgres):
 
     q = anosql.load_queries_from_string("postgres", _queries)
 
-    q.create_some_table(postgres)
+    q.create_some_table(postgresql)
 
-    assert q.insert_some_value_auto(postgres, 1, 2, 3) == 1
-    assert q.get_all_values(postgres) == [(1, 2, 3)]
+    assert q.insert_some_value_auto(postgresql, 1, 2, 3) == 1
+    assert q.get_all_values(postgresql) == [(1, 2, 3)]
 
-    assert q.insert_some_value_auto(postgres, 1, 2, 3) == 2
+    assert q.insert_some_value_auto(postgresql, 1, 2, 3) == 2
 
 
-def test_parameterized_select_pg(postgres):
+def test_parameterized_select_pg(postgresql):
     _queries = ("-- name: create-some-table!\n"
                 "-- testing insertion\n"
                 "CREATE TABLE foo (id serial primary key, a int, b int, c int);\n\n"
@@ -174,13 +156,13 @@ def test_parameterized_select_pg(postgres):
 
     q = anosql.load_queries_from_string("postgres", _queries)
 
-    q.create_some_table(postgres)
-    q.insert_some_value(postgres)
+    q.create_some_table(postgresql)
+    q.insert_some_value(postgresql)
 
-    assert q.get_all_values(postgres, 1) == [(1, 2, 3)]
+    assert q.get_all_values(postgresql, 1) == [(1, 2, 3)]
 
 
-def test_parameterized_insert_named_pg(postgres):
+def test_parameterized_insert_named_pg(postgresql):
     _queries = ("-- name: create-some-table!\n"
                 "-- testing insertion\n"
                 "CREATE TABLE foo (id serial primary key, a int, b int, c int);\n\n"
@@ -191,13 +173,13 @@ def test_parameterized_insert_named_pg(postgres):
 
     q = anosql.load_queries_from_string("postgres", _queries)
 
-    q.create_some_table(postgres)
-    q.insert_some_value(postgres, a=1, b=2, c=3)
+    q.create_some_table(postgresql)
+    q.insert_some_value(postgresql, a=1, b=2, c=3)
 
-    assert q.get_all_values(postgres) == [(1, 2, 3)]
+    assert q.get_all_values(postgresql) == [(1, 2, 3)]
 
 
-def test_parameterized_select_named_pg(postgres):
+def test_parameterized_select_named_pg(postgresql):
     _queries = ("-- name: create-some-table!\n"
                 "-- testing insertion\n"
                 "CREATE TABLE foo (id serial primary key, a int, b int, c int);\n\n"
@@ -208,7 +190,7 @@ def test_parameterized_select_named_pg(postgres):
 
     q = anosql.load_queries_from_string("postgres", _queries)
 
-    q.create_some_table(postgres)
-    q.insert_some_value(postgres)
+    q.create_some_table(postgresql)
+    q.insert_some_value(postgresql)
 
-    assert q.get_all_values(postgres, a=1) == [(1, 2, 3)]
+    assert q.get_all_values(postgresql, a=1) == [(1, 2, 3)]

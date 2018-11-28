@@ -5,148 +5,90 @@ anosql main module
 import os
 import re
 
+from anosql.loaders import get_query_loader
+from anosql.exceptions import SQLLoadException
 
-class SQLLoadException(Exception):
-    pass
-
-
-class SQLParseException(Exception):
-    pass
-
-
-SELECT = 1
-INSERT_UPDATE_DELETE = 2
-AUTO_GEN = 3
-_RE_VARS = (r'(?P<dblquote>"[^"]+")|'
-            r'(?P<quote>\'[^\']+\')|'
-            r'(?P<lead>[^:]):(?P<var_name>[\w-]+)(?P<trail>[^:])')
-
-
-def var_replacer(m):
-    gd = m.groupdict()
-    if gd['dblquote'] is not None:
-        return gd['dblquote']
-    elif gd['quote'] is not None:
-        return gd['quote']
-    else:
-        return '{lead}%({var_name})s{trail}'.format(**gd)
+namedef_pattern = re.compile(r'--\s*name\s*:\s*')
+empty_pattern = re.compile(r'^\s*$')
 
 
 class Queries(object):
+    """Stores SQL Queries as attributes.
+    @DynamicAttrs
+    """
 
-    def __init__(self, queries=list()):
-        self.available_queries = []
+    def __init__(self, queries=None):
+        if queries is None:
+            queries = []
+        self._available_queries = set()
 
         for name, fn in queries:
             self.add_query(name, fn)
 
+    @property
+    def available_queries(self):
+        return sorted(self._available_queries)
+
     def __repr__(self):
-        return "anosql.Queries(" + self.available_queries.__repr__() + ")"
+        return 'Queries(' + self.available_queries.__repr__() + ')'
 
     def add_query(self, name, fn):
         setattr(self, name, fn)
+        self._available_queries.add(name)
 
-        if name not in self.available_queries:
-            self.available_queries.append(name)
+    def add_child_queries(self, name, child_queries):
+        setattr(self, name, child_queries)
+        for child_name in child_queries.available_queries:
+            self._available_queries.add('{}.{}'.format(name, child_name))
 
 
-def parse_sql_entry(db_type, e):
-    assert db_type in ['sqlite', 'postgres']
+def load_queries_from_sql(sql, query_loader):
+    queries = []
+    for query_text in namedef_pattern.split(sql):
+        if not empty_pattern.match(query_text):
+            queries.append(query_loader.load(query_text))
+    return queries
 
-    lines = e.splitlines()
 
-    # name of query
-    is_name = re.compile(r'\s*--\s+name\s*:\s*(\S+)').match
-    has_name = is_name(lines[0])
-    if not has_name:
-        raise SQLParseException('Query does not start with "-- name:".')
+def load_queries_from_file(file_path, query_loader):
+    with open(file_path) as fp:
+        return load_queries_from_sql(fp.read(), query_loader)
 
-    name = has_name.group(1).replace('-', '_')
 
-    # type of query
-    if '<!' in name:
-        sql_type = AUTO_GEN
-        name = name.replace('<!', '_auto')
-    elif '!' in name:
-        sql_type = INSERT_UPDATE_DELETE
-        name = name.replace('!', '')
-    else:
-        sql_type = SELECT
-
-    use_col_description = True if name.startswith('$') else False
-    name = name.replace('$', '')
-
-    # documentation are comment lines after the initial name
-    is_doc = re.compile(r'\s*--\s(.*)').match
-    doc = ''
-    for i in range(1, len(lines)):
-        has_doc = is_doc(lines[i])
-        if has_doc:
-            doc += has_doc.group(1) + '\n'
-        else:
-            break
-
-    # what remains is the query
-    query = ' '.join(lines[i:])
-    query = query.strip()
-
-    if query == '':
-        return None, None
-
-    if db_type == 'postgres':
-        if sql_type == AUTO_GEN:
-            query = query[:-1] if query[-1] == ';' else query
-            query += ' RETURNING id'
-
-        query = re.sub(_RE_VARS, var_replacer, query)
-
-    # dynamically create the "name" function
-    def fn(conn, *args, **kwargs):
-        results = None
-        cur = conn.cursor()
-        cur.execute(query, kwargs if len(kwargs) > 0 else args)
-
-        if sql_type == SELECT:
-            if use_col_description:
-                cols = [col[0] for col in cur.description]
-                results = [dict(zip(cols, row)) for row in cur.fetchall()]
+def load_queries_from_dir_path(dir_path, query_loader):
+    def _recurse_load_queries(path):
+        queries = Queries()
+        for item in os.listdir(path):
+            item_path = os.path.join(path, item)
+            if os.path.isfile(item_path) and not item.endswith(".sql"):
+                continue
+            elif os.path.isfile(item_path) and item.endswith(".sql"):
+                for name, fn in load_queries_from_file(item_path, query_loader):
+                    queries.add_query(name, fn)
+            elif os.path.isdir(item_path):
+                child_queries = _recurse_load_queries(item_path)
+                queries.add_child_queries(item, child_queries)
             else:
-                results = cur.fetchall()
+                raise RuntimeError(item_path)
+        return queries
 
-        elif sql_type == AUTO_GEN:
-            if db_type == 'postgres':
-                pool = cur.fetchone()
-                results = pool[0] if pool else None
-            elif db_type == 'sqlite':
-                results = cur.lastrowid
-
-        cur.close()
-        return results
-
-    fn.__doc__ = doc
-    fn.__query__ = query
-    fn.func_name = name
-
-    return name, fn
+    return _recurse_load_queries(dir_path)
 
 
-def parse_queries_string(db_type, s):
-    return [parse_sql_entry(db_type, expression)
-            for expression in
-            re.split(r'([ \t]*\r|[ \t]*\n|[ \t]*\r\n){2,}', s)[::2]]
+def load_queries_from_string(db_type, sql):
+    query_loader = get_query_loader(db_type)
+    return Queries(load_queries_from_sql(sql, query_loader))
 
 
-def load_queries(db_type, filename):
-    if not os.path.exists(filename):
-        raise SQLLoadException('Could not read file', filename)
+def load_queries(db_type, path):
+    if not os.path.exists(path):
+        raise SQLLoadException('File does not exist: {}.'.format(path), path)
 
-    with open(filename) as queries_file:
-        f = queries_file.read()
+    query_loader = get_query_loader(db_type)
 
-    queries = parse_queries_string(db_type, f)
-    return Queries(queries)
-
-
-def load_queries_from_string(db_type, string):
-    queries = parse_queries_string(db_type, string)
-    return Queries(queries)
+    if os.path.isdir(path):
+        return load_queries_from_dir_path(path, query_loader)
+    elif os.path.isfile(path):
+        return Queries(load_queries_from_file(path, query_loader))
+    else:
+        raise SQLLoadException('Could not read file: {}'.format(path), path)

@@ -2,5 +2,14 @@ language: python
 python:
   - "2.7"
   - "3.5"
+services:
+  - postgresql
+addons:
+  postgresql: "10"
+  apt:
+    packages:
+      - postgresql-10
+      - postgresql-client-10
+      - postgresql-server-dev-10
 install: "pip install tox"
 script: tox

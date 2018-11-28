@@ -83,14 +83,14 @@ the ``WHERE`` clause.  You can use parameters to do this:
 
   -- name: get-greetings-for-language-and-length
   -- Get all the greetings in the database
-  SELECT * 
+  SELECT *
   FROM greetings
   WHERE lang = %s;
 
 And they become positional parameters:
 
 .. code-block:: python
-  
+
   visitor_language = "en"
   queries.get_all_greetings(conn, visitor_language)
 
@@ -106,11 +106,11 @@ can give the parameters names:
 
   -- name: get-greetings-for-language-and-length
   -- Get all the greetings in the database
-  SELECT * 
+  SELECT *
   FROM greetings
   WHERE lang = :lang
   AND len(greeting) <= :length_limit;
-  
+
 If you were writing a Postgresql query, you could also format the parameters as
 ``%s(lang)`` and ``%s(length_limit)``.
 
@@ -118,7 +118,7 @@ Then, call your queries like you would any Python function with named
 parameters:
 
 .. code-block:: python
-  
+
   visitor_language = "en"
 
   greetings_for_texting = queries.get_all_greetings(
@@ -141,6 +141,51 @@ insert query, you can add ``<!`` to the end of your query name.
 
   -- name: create-user<!
   INSERT INTO person (name) VALUES (:name)
+
+Adding custom query loaders.
+****************************
+
+Out of the box ``anosql`` supports SQLite and PostgreSQL via the stdlib ``sqlite3`` database driver
+and ``psycopg2``. If you would like to extend ``anosql`` to communicate with another type of database
+you may create a query loader class based on ``anosql.QueryLoader``. The ``QueryLoader`` class
+is an abstract base class which will require you to override the ``process_sql`` and ``create_fn`` methods.
+
+.. code-block:: python
+
+  import anosql
+
+
+  class MyDbQueryLoader(anosql.QueryLoader):
+       def process_sql(self, name, op_type, sql):
+           # ... Provides a hook to make any custom preparations to the sql text.
+           return sql
+
+       def create_fn(self, name, op_type, sql, use_col_description):
+           # This hook lets you define logic for how to build your query methods.
+           # They take your driver connection and do the work of talking to your database.
+           # The class helps parse your SQL text, and has class level variables such as self.op_type to help you decide
+           # which operation a sql statement intends to perform.
+           #
+           # For examples of how to write query loader classes:
+           # see: `anosql.loaders.Psycopg2QueryLoader` and `anosql.loaders.SQLite3QueryLoader`.
+           def fn(conn, *args, **kwargs):
+               # ...
+               pass
+
+           return fn
+
+
+  # To register your query loader as a valid anosql db_type do:
+  anosql.register_query_loader("mydb", MyDbQueryLoader())
+
+  # To use make a connection to your db, and pass "mydb" as the db_type:
+  import mydbdriver
+  conn = mydbriver.connect("...")
+
+  anosql.load_queries("mydb", "path/to/sql/")
+  users = anosql.get_users(conn)
+
+  conn.close()
 
 Tests
 -----
