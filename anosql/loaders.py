@@ -64,7 +64,7 @@ class QueryLoader(object):
 
         fn = self.create_fn(name, op_type, sql, use_col_description)
         fn.__name__ = name
-        fn.__docs__ = docs
+        fn.__doc__ = docs
 
         return name, fn
 
