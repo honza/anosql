@@ -52,26 +52,24 @@ We can issue SQL queries, like so:
 
     # PostgreSQL
     conn = psycopg2.connect('...')
-    queries = anosql.load_queries('postgres', 'queries.sql')
+    queries = anosql.from_path('queries.sql', 'psycopg2')
 
     # Or, Sqlite3...
     conn = sqlite3.connect('cool.db')
-    queries = anosql.load_queries('sqlite', 'queries.sql')
+    queries = anosql.from_path('queries.sql', 'sqlite3)
 
-    queries = queries.get_all_users(conn)
-    # [{"id": 1, "name": "Meghan"}, {"id": 2, "name": "Harry"}]
-
-    queries = queries.get_all_greetings(conn)
+    queries.get_all_greetings(conn)
     # => [(1, 'Hi')]
 
     queries.get_all_greetings.__doc__
     # => Get all the greetings in the database
 
-    queries.get_all_greetings.__query__
+    queries.get_all_greetings.sql
     # => SELECT * FROM greetings;
 
     queries.available_queries
-    # => ['get_all_greetings', 'get_all_books']
+    # => ['get_all_greetings']
+
 
 Parameters
 **********
@@ -146,46 +144,58 @@ Adding custom query loaders.
 ****************************
 
 Out of the box ``anosql`` supports SQLite and PostgreSQL via the stdlib ``sqlite3`` database driver
-and ``psycopg2``. If you would like to extend ``anosql`` to communicate with another type of database
-you may create a query loader class based on ``anosql.QueryLoader``. The ``QueryLoader`` class
-is an abstract base class which will require you to override the ``process_sql`` and ``create_fn`` methods.
+and ``psycopg2``. If you would like to extend ``anosql`` to communicate with another type of databases
+you may create a driver adapeter class and register it with ``anosql.register_driver_adapter()``.
 
-.. code-block:: python
+Driver adapters are duck-typed classes which adhere to the below interface. Looking at ``anosql/adapters`` package
+is a good place to get started by looking at how the ``psycopg2`` and ``sqlite3`` adapters work.
 
-  import anosql
+To register a new loader::
+
+    import anosql
+
+    class MyDbAdapter():
+        def process_sql(self, name, op_type, sql):
+            pass
+
+        def select(self, conn, sql, parameters):
+            pass
+
+        @contextmanager
+        def select_cursor(self, conn, sql, parameters):
+            pass
+
+        def insert_update_delete(self, conn, sql, parameters):
+            pass
+
+        def insert_update_delete_many(self, conn, sql, parameters):
+            pass
+
+        def insert_returning(self, conn, sql, parameters):
+            pass
+
+        def execute_script(self, conn, sql):
+            pass
 
 
-  class MyDbQueryLoader(anosql.QueryLoader):
-       def process_sql(self, name, op_type, sql):
-           # ... Provides a hook to make any custom preparations to the sql text.
-           return sql
+    anosql.register_driver_adapter("mydb", MyDbAdapter)
 
-       def create_fn(self, name, op_type, sql, use_col_description):
-           # This hook lets you define logic for how to build your query methods.
-           # They take your driver connection and do the work of talking to your database.
-           # The class helps parse your SQL text, and has class level variables such as self.op_type to help you decide
-           # which operation a sql statement intends to perform.
-           #
-           # For examples of how to write query loader classes:
-           # see: `anosql.loaders.Psycopg2QueryLoader` and `anosql.loaders.SQLite3QueryLoader`.
-           def fn(conn, *args, **kwargs):
-               # ...
-               pass
+    # To use make a connection to your db, and pass "mydb" as the db_type:
+    import mydbdriver
+    conn = mydbriver.connect("...")
 
-           return fn
+    anosql.load_queries("path/to/sql/", "mydb")
+    greetings = anosql.get_greetings(conn)
 
+    conn.close()
 
-  # To register your query loader as a valid anosql db_type do:
-  anosql.register_query_loader("mydb", MyDbQueryLoader())
+If your adapter constructor takes arguments you can register a function which can build
+your adapter instance::
 
-  # To use make a connection to your db, and pass "mydb" as the db_type:
-  import mydbdriver
-  conn = mydbriver.connect("...")
+    def adapter_factory():
+        return MyDbAdapter("foo", 42)
 
-  anosql.load_queries("mydb", "path/to/sql/")
-  users = anosql.get_users(conn)
-
-  conn.close()
+    anosql.register_driver_adapter("mydb", adapter_factory)
 
 Tests
 -----
