@@ -70,7 +70,7 @@ We can issue SQL queries, like so:
     # => ['get_all_greetings']
 
 
-  Parameters
+Parameters
 **********
 
 Often, you want to change parts of the query dynamically, particularly values in the WHERE clause.
@@ -118,13 +118,14 @@ Then, call your queries like you would any Python function with named parameters
   greetings_for_texting = queries.get_all_greetings(conn, lang=visitor_language, length_limit=140)
 
 
-
-
-API
----
+Contents
+--------
 .. toctree::
    :maxdepth: 2
 
+   Getting Started <getting_started>
+   Extending anosql <extending>
+   Upgrading <upgr
    API <source/modules>
 
 License
