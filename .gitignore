@@ -1,6 +1,5 @@
 *.pyc
 docs/_build
-docs/source
 venv
 .venv/
 .eggs
