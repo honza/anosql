@@ -16,6 +16,9 @@ A Python library for using SQL
 Inspired by the excellent `Yesql`_ library by Kris Jenkins.  In my mother
 tongue, *ano* means *yes*.
 
+If you are on python3.6+ or need ``anosql`` to work with ``asyncio`` based database drivers.
+See the related project `aiosql <https://github.com/nackjicholson/aiosql>`_.
+
 Installation
 ------------
 
@@ -204,11 +207,6 @@ Tests
 
    $ pip install tox
    $ tox
-
-Caveats
--------
-
-Postgresql and sqlite only at the moment
 
 License
 -------
