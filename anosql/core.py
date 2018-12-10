@@ -20,9 +20,7 @@ _ADAPTERS = {
 def register_driver_adapter(driver_name, driver_adapter):
     """Registers custom driver adapter classes to extend ``anosql`` to to handle additional drivers.
 
-    For details on how to create a new driver adapter see the documentation
-    `link <https://nackjiholson.github.io/anosql>`_.
-    TODO: Make a link to the documentation when it exists.
+    For details on how to create a new driver adapter see :ref:`driver-adapters` documentation.
 
     Args:
         driver_name (str): The driver type name.
