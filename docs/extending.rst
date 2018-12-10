@@ -1,3 +1,5 @@
+.. _extending-anosql:
+
 ################
 Extending anosql
 ################

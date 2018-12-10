@@ -124,8 +124,9 @@ Contents
    :maxdepth: 2
 
    Getting Started <getting_started>
+   Defining Queries <defining_queries>
    Extending anosql <extending>
-   Upgrading <upgr
+   Upgrading <upgrading>
    API <source/modules>
 
 License
