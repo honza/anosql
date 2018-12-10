@@ -1,5 +1,12 @@
 # Changelog anosql
 
+### Version 1.0.0
+
+API Changes ``from_str``, ``from_path``
+New query operations, ``#`` ``*!``
+Context managers exposing the db ``cursor``
+Driver Adapter approach.
+
 ### Version dev
 
 * Feature: Return dict if the name of the query is prepended with $
