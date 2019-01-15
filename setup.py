@@ -5,7 +5,7 @@ with open('README.rst') as readme_file:
 
 setup(
     name='anosql',
-    version='1.0.0',
+    version='1.0.1',
     url='https://github.com/honza/anosql',
     install_requires=[],
     description='Easy SQL in Python',
