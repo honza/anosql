@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 with open('README.rst') as readme_file:
     long_desc = readme_file.read()
@@ -14,6 +14,6 @@ setup(
     author_email='me@honza.ca',
     maintainer='Honza Pokorny',
     maintainer_email='me@honza.ca',
-    packages=['anosql'],
+    packages=find_packages(),
     include_package_data=True
 )
