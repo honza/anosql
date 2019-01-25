@@ -59,7 +59,7 @@ We can issue SQL queries, like so:
 
     # Or, Sqlite3...
     conn = sqlite3.connect('cool.db')
-    queries = anosql.from_path('queries.sql', 'sqlite3)
+    queries = anosql.from_path('queries.sql', 'sqlite3')
 
     queries.get_all_greetings(conn)
     # => [(1, 'Hi')]
