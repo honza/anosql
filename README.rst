@@ -40,7 +40,7 @@ Given a ``queries.sql`` file:
   -- Get all the greetings in the database
   SELECT * FROM greetings;
 
-  -- name: $select-users
+  -- name: select-users
   -- Get all the users from the database,
   -- and return it as a dict
   SELECT * FROM USERS;
