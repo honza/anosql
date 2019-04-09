@@ -82,8 +82,8 @@ the ``WHERE`` clause.  You can use parameters to do this:
 
 .. code-block:: sql
 
-  -- name: get-greetings-for-language-and-length
-  -- Get all the greetings in the database
+  -- name: get-greetings-for-language
+  -- Get all the greetings in the database for given language
   SELECT *
   FROM greetings
   WHERE lang = %s;
@@ -93,7 +93,7 @@ And they become positional parameters:
 .. code-block:: python
 
   visitor_language = "en"
-  queries.get_all_greetings(conn, visitor_language)
+  queries.get_greetings_for_language(conn, visitor_language)
 
 
 
@@ -106,7 +106,7 @@ can give the parameters names:
 .. code-block:: sql
 
   -- name: get-greetings-for-language-and-length
-  -- Get all the greetings in the database
+  -- Get all the greetings in the database for given language and length
   SELECT *
   FROM greetings
   WHERE lang = :lang
@@ -122,7 +122,7 @@ parameters:
 
   visitor_language = "en"
 
-  greetings_for_texting = queries.get_all_greetings(
+  greetings_for_texting = queries.get_greetings_for_language_and_length(
                 conn, lang=visitor_language, length_limit=140)
 
 Update/Insert/Delete
