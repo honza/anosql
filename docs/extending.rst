@@ -33,7 +33,7 @@ Database driver adapters in ``anosql`` are a duck-typed class which follow the b
             pass
 
 
-    anosql.register_driver_adapter("mydb", MyDbAdapter)
+    anosql.core.register_driver_adapter("mydb", MyDbAdapter)
 
 If your adapter constructor takes arguments you can register a function which can build
 your adapter instance::
@@ -41,7 +41,7 @@ your adapter instance::
     def adapter_factory():
         return MyDbAdapter("foo", 42)
 
-    anosql.register_driver_adapter("mydb", adapter_factory)
+    anosql.core.register_driver_adapter("mydb", adapter_factory)
 
 Looking at the source of the builtin
 `adapters/ <https://github.com/honza/anosql/tree/master/anosql/adapters>`_ is a great place

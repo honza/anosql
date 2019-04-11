@@ -82,8 +82,8 @@ the ``WHERE`` clause.  You can use parameters to do this:
 
 .. code-block:: sql
 
-  -- name: get-greetings-for-language-and-length
-  -- Get all the greetings in the database
+  -- name: get-greetings-for-language
+  -- Get all the greetings in the database for given language
   SELECT *
   FROM greetings
   WHERE lang = %s;
@@ -93,7 +93,7 @@ And they become positional parameters:
 .. code-block:: python
 
   visitor_language = "en"
-  queries.get_all_greetings(conn, visitor_language)
+  queries.get_greetings_for_language(conn, visitor_language)
 
 
 
@@ -106,7 +106,7 @@ can give the parameters names:
 .. code-block:: sql
 
   -- name: get-greetings-for-language-and-length
-  -- Get all the greetings in the database
+  -- Get all the greetings in the database for given language and length
   SELECT *
   FROM greetings
   WHERE lang = :lang
@@ -122,7 +122,7 @@ parameters:
 
   visitor_language = "en"
 
-  greetings_for_texting = queries.get_all_greetings(
+  greetings_for_texting = queries.get_greetings_for_language_and_length(
                 conn, lang=visitor_language, length_limit=140)
 
 Update/Insert/Delete
@@ -148,7 +148,7 @@ Adding custom query loaders.
 
 Out of the box ``anosql`` supports SQLite and PostgreSQL via the stdlib ``sqlite3`` database driver
 and ``psycopg2``. If you would like to extend ``anosql`` to communicate with another type of databases
-you may create a driver adapeter class and register it with ``anosql.register_driver_adapter()``.
+you may create a driver adapeter class and register it with ``anosql.core.register_driver_adapter()``.
 
 Driver adapters are duck-typed classes which adhere to the below interface. Looking at ``anosql/adapters`` package
 is a good place to get started by looking at how the ``psycopg2`` and ``sqlite3`` adapters work.
@@ -156,6 +156,7 @@ is a good place to get started by looking at how the ``psycopg2`` and ``sqlite3`
 To register a new loader::
 
     import anosql
+    import anosql.core
 
     class MyDbAdapter():
         def process_sql(self, name, op_type, sql):
@@ -181,7 +182,7 @@ To register a new loader::
             pass
 
 
-    anosql.register_driver_adapter("mydb", MyDbAdapter)
+    anosql.core.register_driver_adapter("mydb", MyDbAdapter)
 
     # To use make a connection to your db, and pass "mydb" as the db_type:
     import mydbdriver
