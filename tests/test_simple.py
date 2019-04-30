@@ -199,15 +199,8 @@ def test_without_trailing_semi_colon_pg(postgresql):
     """Make sure keywords ending queries are recognized even without
     semi-colons.
     """
-    _queries = ("-- name: create-some-table#\n"
-                "-- testing insertion\n"
-                "CREATE TABLE foo (id serial primary key, a int, b int, c int)\n\n"
-                "-- name: insert-some-value!\n"
-                "INSERT INTO foo (a, b, c) VALUES (1, 2, 3)\n\n"
-                "-- name: get-all-values-by-a\n"
+    _queries = ("-- name: get-by-a\n"
                 "SELECT a, b, c FROM foo WHERE a = :a\n")
     
     q = anosql.from_str(_queries, "psycopg2")
-    q.create_some_table(postgresql)
-    q.insert_some_value(postgresql)
-    assert q.get_all_values_by_a(postgresql, a=1) == [(1, 2, 3)]
+    assert q.get_by_a.sql == "SELECT a, b, c FROM foo WHERE a = %(a)s"
