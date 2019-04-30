@@ -20,7 +20,7 @@ def populate_sqlite3_db(db_path):
                 firstname integer not null,
                 lastname text not null
             );
-            
+
             create table blogs (
                 blogid integer not null primary key,
                 userid integer not null,
