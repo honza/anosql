@@ -8,10 +8,7 @@ matrix:
   include:
     - python: "3.7"
       env: TOXENV=flake8
-services:
-  - postgresql
 addons:
-  postgresql: "11"
   apt:
     packages:
       - postgresql-11
