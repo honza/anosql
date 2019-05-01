@@ -10,6 +10,8 @@ matrix:
       env: TOXENV=flake8
     - python: "3.7"
       env: TOXENV=docs
+    - python: "3.7"
+      env: TOXENV=check-manifest
 before_install:
   # don't install postgresql for flake8 and docs environments
   - if test -z "$TOXENV"; then sudo apt-get -y install --no-install-recommends postgresql-11 postgresql-client-11 postgresql-server-dev-11; fi
