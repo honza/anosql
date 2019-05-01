@@ -1,1 +1,7 @@
 include README.rst
+include CHANGELOG
+include LICENSE
+include tox.ini
+include test_requirements.txt
+recursive-include docs *.rst Makefile conf.py make.bat
+recursive-include tests *.csv *.sql
