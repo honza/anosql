@@ -195,7 +195,7 @@ def test_parameterized_select_named_pg(postgresql):
     assert q.get_all_values(postgresql, a=1) == [(1, 2, 3)]
 
 
-def test_without_trailing_semi_colon_pg(postgresql):
+def test_without_trailing_semi_colon_pg():
     """Make sure keywords ending queries are recognized even without
     semi-colons.
     """
