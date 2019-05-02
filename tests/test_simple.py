@@ -201,6 +201,5 @@ def test_without_trailing_semi_colon_pg():
     """
     _queries = ("-- name: get-by-a\n"
                 "SELECT a, b, c FROM foo WHERE a = :a\n")
-    
     q = anosql.from_str(_queries, "psycopg2")
     assert q.get_by_a.sql == "SELECT a, b, c FROM foo WHERE a = %(a)s"
