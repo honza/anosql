@@ -193,3 +193,14 @@ def test_parameterized_select_named_pg(postgresql):
     q.insert_some_value(postgresql)
 
     assert q.get_all_values(postgresql, a=1) == [(1, 2, 3)]
+
+
+def test_without_trailing_semi_colon_pg():
+    """Make sure keywords ending queries are recognized even without
+    semi-colons.
+    """
+    _queries = ("-- name: get-by-a\n"
+                "SELECT a, b, c FROM foo WHERE a = :a\n")
+    
+    q = anosql.from_str(_queries, "psycopg2")
+    assert q.get_by_a.sql == "SELECT a, b, c FROM foo WHERE a = %(a)s"
