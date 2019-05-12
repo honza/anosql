@@ -7,7 +7,7 @@ Extending anosql
 Driver Adapters
 ---------------
 
-Database driver adapters in ``anosql`` are a duck-typed class which follow the below interface.::
+Database driver adapters in ``anosql`` are duck-typed classes which follow the below interface.::
 
     class MyDbAdapter():
         def process_sql(self, name, op_type, sql):

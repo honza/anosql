@@ -24,7 +24,7 @@ Each method on an ``anosql.Queries`` object accepts a database connection to use
       from worlds
      where world_name = :world_name;
 
-By specifying ``db_driver="sqlite3"`` we can use the python stdlib ``sqlite3`` driver to execute these sql queries and
+By specifying ``db_driver="sqlite3"`` we can use the Python stdlib ``sqlite3`` driver to execute these SQL queries and
 get the results. We're also using the ``sqlite3.Row`` type for our records to make it easy to access our data via
 their column names rather than as tuple indices.
 
