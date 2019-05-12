@@ -3,6 +3,7 @@ anosql
 
 .. image:: https://badge.fury.io/py/anosql.svg
     :target: https://badge.fury.io/py/anosql
+    :alt: pypi package version
 
 .. image:: http://readthedocs.org/projects/anosql/badge/?version=latest
     :target: http://anosql.readthedocs.io/en/latest/?badge=latest
@@ -10,6 +11,7 @@ anosql
 
 .. image:: https://travis-ci.org/honza/anosql.svg?branch=master
     :target: https://travis-ci.org/honza/anosql
+    :alt: Travid build status
 
 A Python library for using SQL
 

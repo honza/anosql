@@ -8,13 +8,15 @@ Welcome to anosql's documentation!
 
 .. image:: https://badge.fury.io/py/anosql.svg
     :target: https://badge.fury.io/py/anosql
+    :alt: pypi package version
 
 .. image:: http://readthedocs.org/projects/anosql/badge/?version=latest
     :target: http://anosql.readthedocs.io/en/latest/?badge=latest
-    :alt: Documentation Status
+    :alt: Documentation status
 
 .. image:: https://travis-ci.org/honza/anosql.svg?branch=master
     :target: https://travis-ci.org/honza/anosql
+    :alt: Travis build status
 
 A Python library for using SQL
 
