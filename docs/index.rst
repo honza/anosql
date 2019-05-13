@@ -8,20 +8,22 @@ Welcome to anosql's documentation!
 
 .. image:: https://badge.fury.io/py/anosql.svg
     :target: https://badge.fury.io/py/anosql
+    :alt: pypi package version
 
 .. image:: http://readthedocs.org/projects/anosql/badge/?version=latest
     :target: http://anosql.readthedocs.io/en/latest/?badge=latest
+    :alt: Documentation status
 
 .. image:: https://travis-ci.org/honza/anosql.svg?branch=master
     :target: https://travis-ci.org/honza/anosql
+    :alt: Travis build status
 
 A Python library for using SQL
 
 Inspired by the excellent `Yesql`_ library by Kris Jenkins.  In my mother
 tongue, *ano* means *yes*.
 
-If you are on python3.6+ or need ``anosql`` to work with ``asyncio`` based database drivers.
-See the related project `aiosql <https://github.com/nackjicholson/aiosql>`_.
+If you are on python3.6+ or need ``anosql`` to work with ``asyncio`` based database drivers, see the related project `aiosql <https://github.com/nackjicholson/aiosql>`_.
 
 Installation
 ------------
@@ -58,7 +60,7 @@ We can issue SQL queries, like so:
 
     # Or, Sqlite3...
     conn = sqlite3.connect('cool.db')
-    queries = anosql.from_path('queries.sql', 'sqlite3)
+    queries = anosql.from_path('queries.sql', 'sqlite3')
 
     queries.get_all_greetings(conn)
     # => [(1, 'Hi')]
@@ -76,13 +78,13 @@ We can issue SQL queries, like so:
 Parameters
 **********
 
-Often, you want to change parts of the query dynamically, particularly values in the WHERE clause.
+Often, you want to change parts of the query dynamically, particularly values in the ``WHERE`` clause.
 You can use parameters to do this:
 
 .. code-block:: sql
 
-  -- name: get-greetings-for-language-and-length
-  -- Get all the greetings in the database
+  -- name: get-greetings-for-language
+  -- Get all the greetings in the database for a given language
   SELECT *
   FROM greetings
   WHERE lang = %s;
@@ -92,7 +94,7 @@ And they become positional parameters:
 .. code-block:: python
 
   visitor_language = "en"
-  queries.get_all_greetings(conn, visitor_language)
+  queries.get_all_greetings_for_language(conn, visitor_language)
 
 
 
@@ -103,8 +105,8 @@ To make queries with many parameters more understandable and maintainable, you c
 
 .. code-block:: sql
 
-  -- name: get-greetings-for-language-and-length
-  -- Get all the greetings in the database
+  -- name: get-greetings-for-language
+  -- Get all the greetings in the database for given language and length
   SELECT *
   FROM greetings
   WHERE lang = :lang

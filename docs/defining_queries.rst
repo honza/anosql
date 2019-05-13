@@ -6,9 +6,9 @@ Query Names & Comments
 ======================
 
 Name definitions are how ``anosql`` determines how to name the SQL code blocks which are loaded.
-A query name definition is a normal SQL comment starting with "-- name:" and is followed by the
-name of the query. You can use ``-`` or ``_`` in your query names, but the methods in python
-will always be valid python names using underscores.
+A query name definition is a normal SQL comment starting with "\-\- name:" and is followed by the
+name of the query. You can use ``-`` or ``_`` in your query names, but the methods in Python
+will always be valid Python names using underscores.
 
 .. code-block:: sql
 
@@ -18,7 +18,7 @@ will always be valid python names using underscores.
 The above example when loaded by ``anosql.from_path`` will return an object with a
 ``.get_all_blogs(conn)`` method.
 
-Your SQL comments will be added to your methods as python documentation, and accessible by calling
+Your SQL comments will be added to your methods as Python docstrings, and accessible by calling
 ``help()`` on them.
 
 .. code-block:: sql
@@ -33,7 +33,7 @@ Your SQL comments will be added to your methods as python documentation, and acc
     queries = anosql.from_path("blogs.sql", "sqlite3")
     help(anosql.get_all_blogs)
 
-output
+returns
 
 .. code-block:: text
 
@@ -52,7 +52,7 @@ execute and return results. In the above section the ``get-all-blogs`` name has 
 characters trailing it. This lack of operator is actually the most basic operator which performs
 SQL ``select`` statements and returns a list of rows. When writing an application you will often
 need to perform other operations besides selects, like inserts, deletes, and bulk opearations. The
-operators detailed in this section let you declare in your SQL, how your code should be executed
+operators detailed in this section let you declare in your SQL how your code should be executed
 by the database driver.
 
 Insert/Update/Delete with ``!``
@@ -142,7 +142,7 @@ many blog rows.
         :published
     )
 
-Applying this to a list of blogs in python::
+Applying this to a list of blogs in Python::
 
     queries = anosql.from_path("blogs.sql", "psycopg2")
     blogs = [
@@ -155,8 +155,8 @@ Applying this to a list of blogs in python::
 Execute SQL script statements with ``#``
 ---------------------------------------------
 
-Executes some sql statements as a script. These methods don't do variable substitution, or return
-any rows. An example usecase is using data definition statements like create table in order to
+Executes some SQL statements as a script. These methods don't do variable substitution, or return
+any rows. An example use case is using data definition statements like `create` table in order to
 setup your database.
 
 .. code-block:: sql

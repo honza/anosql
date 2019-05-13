@@ -3,6 +3,7 @@ anosql
 
 .. image:: https://badge.fury.io/py/anosql.svg
     :target: https://badge.fury.io/py/anosql
+    :alt: pypi package version
 
 .. image:: http://readthedocs.org/projects/anosql/badge/?version=latest
     :target: http://anosql.readthedocs.io/en/latest/?badge=latest
@@ -10,14 +11,16 @@ anosql
 
 .. image:: https://travis-ci.org/honza/anosql.svg?branch=master
     :target: https://travis-ci.org/honza/anosql
+    :alt: Travid build status
 
 A Python library for using SQL
 
 Inspired by the excellent `Yesql`_ library by Kris Jenkins.  In my mother
 tongue, *ano* means *yes*.
 
-If you are on python3.6+ or need ``anosql`` to work with ``asyncio`` based database drivers.
-See the related project `aiosql <https://github.com/nackjicholson/aiosql>`_.
+If you are on python3.6+ or need ``anosql`` to work with ``asyncio``-based database drivers, see the related project, `aiosql <https://github.com/nackjicholson/aiosql>`_.
+
+Complete documentation is available at `Read The Docs <https://anosql.readthedocs.io/en/latest/>`_.
 
 Installation
 ------------
@@ -146,9 +149,9 @@ insert query, you can add ``<!`` to the end of your query name.
 Adding custom query loaders.
 ****************************
 
-Out of the box ``anosql`` supports SQLite and PostgreSQL via the stdlib ``sqlite3`` database driver
-and ``psycopg2``. If you would like to extend ``anosql`` to communicate with another type of databases
-you may create a driver adapeter class and register it with ``anosql.core.register_driver_adapter()``.
+Out of the box, ``anosql`` supports SQLite and PostgreSQL via the stdlib ``sqlite3`` database driver
+and ``psycopg2``. If you would like to extend ``anosql`` to communicate with other types of databases,
+you may create a driver adapter class and register it with ``anosql.core.register_driver_adapter()``.
 
 Driver adapters are duck-typed classes which adhere to the below interface. Looking at ``anosql/adapters`` package
 is a good place to get started by looking at how the ``psycopg2`` and ``sqlite3`` adapters work.
@@ -193,7 +196,7 @@ To register a new loader::
 
     conn.close()
 
-If your adapter constructor takes arguments you can register a function which can build
+If your adapter constructor takes arguments, you can register a function which can build
 your adapter instance::
 
     def adapter_factory():
