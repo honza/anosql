@@ -4,6 +4,8 @@
 Extending anosql
 ################
 
+.. _driver-adapters:
+
 Driver Adapters
 ---------------
 
