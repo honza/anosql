@@ -65,7 +65,7 @@ We can issue SQL queries, like so:
     queries = anosql.from_path('queries.sql', 'sqlite3')
 
     queries.get_all_greetings(conn)
-    # => [(1, 'Hi')]
+    # => [(1, 'en', 'Hi')]
 
     queries.get_all_greetings.__doc__
     # => Get all the greetings in the database
@@ -97,7 +97,30 @@ And they become positional parameters:
 
   visitor_language = "en"
   queries.get_greetings_for_language(conn, visitor_language)
+  # => [(1, 'en', 'Hi')]
 
+
+One Row Query
+*************
+
+Often, you would expect at most one row from a query, so that getting a list
+is not convenient. Appending ``?`` to the query name makes it return either one
+tuple if it returned one row, or ``None`` in other cases.
+
+.. code-block:: sql
+
+  -- name: get-a-greeting?
+  -- Get a greeting based on its id
+  SELECT *
+  FROM greetings
+  WHERE id = %s;
+
+Then a tuple is returned:
+
+.. code-block:: python
+
+  queries.get_a_greeting(conn, 1)
+  # => (1, 'en', 'Hi')
 
 
 Named Parameters
