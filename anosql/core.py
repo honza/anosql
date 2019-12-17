@@ -96,6 +96,7 @@ class SQLOperationType(object):
     INSERT_UPDATE_DELETE_MANY = 2
     SCRIPT = 3
     SELECT = 4
+    SELECT_ONE_ROW = 5
 
 
 class Queries:
@@ -172,6 +173,9 @@ def _create_fns(query_name, docs, op_type, sql, driver_adapter):
             return driver_adapter.insert_update_delete_many(conn, query_name, sql, *parameters)
         elif op_type == SQLOperationType.SCRIPT:
             return driver_adapter.execute_script(conn, sql)
+        elif op_type == SQLOperationType.SELECT_ONE_ROW:
+            res = driver_adapter.select(conn, query_name, sql, parameters)
+            return res[0] if len(res) == 1 else None
         elif op_type == SQLOperationType.SELECT:
             return driver_adapter.select(conn, query_name, sql, parameters)
         else:
@@ -212,6 +216,9 @@ def load_methods(sql_text, driver_adapter):
         query_name = query_name[:-1]
     elif query_name.endswith("#"):
         op_type = SQLOperationType.SCRIPT
+        query_name = query_name[:-1]
+    elif query_name.endswith("?"):
+        op_type = SQLOperationType.SELECT_ONE_ROW
         query_name = query_name[:-1]
     else:
         op_type = SQLOperationType.SELECT

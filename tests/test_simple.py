@@ -74,6 +74,16 @@ def test_parametrized_insert_named(sqlite):
     assert q.get_all_values(sqlite) == [(10, 11, 12)]
 
 
+def test_one_row(sqlite):
+    _test_one_row = ("-- name: one-row?\n"
+                     "SELECT 1, 'hello';\n\n"
+                     "-- name: two-rows?\n"
+                     "SELECT 1 UNION SELECT 2;\n")
+    q = anosql.from_str(_test_one_row, "sqlite3")
+    assert q.one_row(sqlite) == (1, 'hello')
+    assert q.two_rows(sqlite) is None
+
+
 def test_simple_query_pg(postgresql):
     _queries = ("-- name: create-some-table#\n"
                 "-- testing insertion\n"
