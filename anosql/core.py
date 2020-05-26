@@ -1,9 +1,9 @@
 import os
 
-from anosql.adapters.psycopg2 import PsycoPG2Adapter
-from anosql.adapters.sqlite3 import SQLite3DriverAdapter
-from anosql.exceptions import SQLLoadException, SQLParseException
-from anosql.patterns import (
+from .adapters.psycopg2 import PsycoPG2Adapter
+from .adapters.sqlite3 import SQLite3DriverAdapter
+from .exceptions import SQLLoadException, SQLParseException
+from .patterns import (
     query_name_definition_pattern,
     empty_pattern,
     doc_comment_pattern,

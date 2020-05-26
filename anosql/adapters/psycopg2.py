@@ -1,6 +1,6 @@
 from contextlib import contextmanager
 
-from anosql.patterns import var_pattern
+from ..patterns import var_pattern
 
 
 def replacer(match):
