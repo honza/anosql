@@ -1,6 +1,15 @@
 anosql
 ======
 
+**NOTICE**: This project is now deprecated in favor of `aiosql`_.
+
+Unfortunately, I no longer have the time to devote to this project, and aiosql
+is now a lot more popular.  I don't think it makes sense to maintain both.
+Open source ftw!  Thanks for your hard work, `Will`_!
+
+.. _aiosql: https://github.com/nackjicholson/aiosql
+.. _Will: https://github.com/nackjicholson
+
 .. image:: https://badge.fury.io/py/anosql.svg
     :target: https://badge.fury.io/py/anosql
     :alt: pypi package version
